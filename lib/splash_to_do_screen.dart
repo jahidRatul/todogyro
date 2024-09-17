@@ -19,7 +19,7 @@ class _SplashToDoScreenState extends State<SplashToDoScreen> {
     super.initState();
   }
   navigateToListScreen(){
-    Future.delayed(Duration(seconds: 7), () {
+    Future.delayed(Duration(seconds: 5), () {
       print(Duration);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TodoDashboard()),
       );

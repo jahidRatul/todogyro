@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:link3app/core/constants/app_colors.dart';
 import 'package:link3app/core/constants/app_sizes.dart';
+import 'package:link3app/data_model/task_list_data.dart';
 import 'package:link3app/task_list_screen.dart';
 
 class TodoDashboard extends StatefulWidget {
@@ -12,8 +13,9 @@ class TodoDashboard extends StatefulWidget {
 }
 
 class _TodoDashboardState extends State<TodoDashboard> {
-  final _taskController = TextEditingController();
 
+  final _ctrlTaskListName = TextEditingController();
+  List <TaskListData> allTaskList=[];
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +23,57 @@ class _TodoDashboardState extends State<TodoDashboard> {
       child: Scaffold(
         backgroundColor: AppColors.backgroundColor,
         floatingActionButton: FloatingActionButton(
-
           backgroundColor:  AppColors.primaryBlue,
           shape: const CircleBorder(),
             child:  Icon(Icons.add,
                 color: AppColors.baseWhite,
                 size: 28),
-
             onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>TaskListScreen()));
+              showDialog(
+                  context: context,
+                  builder: (context)=>AlertDialog(
+                    title: Text('Add a Task List'),
+                    content: TextField(
+                      controller: _ctrlTaskListName,
+                      textCapitalization: TextCapitalization.sentences,
 
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.baseDark
+                        ),
+                          onPressed: (){
+                            _ctrlTaskListName.clear();
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancel",
+                            style: TextStyle(
+                              color: AppColors.baseWhite
+                            ),
+                          )
+                      ),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue
+                          ),
+                          onPressed: (){
+                            allTaskList.add(TaskListData(name: _ctrlTaskListName.text));
+                            setState(() {
+                            });
+                            _ctrlTaskListName.clear();
+                            Navigator.pop(context);
+                          },
+                          child: Text("Submit",
+                            style: TextStyle(
+                                color: AppColors.baseWhite
+                            ),
+                          )
+                      ),
+
+                    ],
+                  )
+              );
             }
         ),
         
@@ -46,7 +89,6 @@ class _TodoDashboardState extends State<TodoDashboard> {
                   style: TextStyle(
                     fontSize: AppSizes.szFontTitle,
                     fontWeight: FontWeight.w500,
-
                   ),
                 ),
                 subtitle: Text("5 Completed, 5 Uncompleted",
@@ -69,8 +111,12 @@ class _TodoDashboardState extends State<TodoDashboard> {
                 },
               shrinkWrap: true,
               padding: EdgeInsets.all(AppSizes.padDefaultMicro),
-              itemCount: 2,
+              itemCount:allTaskList?.length??0,
                 itemBuilder: (BuildContext context, index){
+                  // TaskListWidget listTile=allTaskList[index];
+                  // listTile.onPressed=(){
+
+                  // };
                   return ListTile(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSizes.padDefaultMicro),
@@ -79,12 +125,15 @@ class _TodoDashboardState extends State<TodoDashboard> {
                       Icons.list,color: AppColors.primaryBlue,size: AppSizes.padDefault,
                     ),
                     tileColor: AppColors.baseWhite,
-                    title: Text("List Name"),
+                    title: Text(allTaskList[index].name??""),
                     textColor: AppColors.subTextColor,
                     titleTextStyle:TextStyle(fontSize: AppSizes.szFontLabel) ,
                     trailing: Text("1",
-                    style: TextStyle(color: AppColors.primaryBlue,fontSize: AppSizes.szFontLabel),
+                      style: TextStyle(color: AppColors.primaryBlue,fontSize: AppSizes.szFontLabel),
                     ),
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>TaskListScreen(taskListData: allTaskList[index],)));
+                    },
 
                   );
                 }
@@ -95,4 +144,5 @@ class _TodoDashboardState extends State<TodoDashboard> {
     );
   }
 }
+
 

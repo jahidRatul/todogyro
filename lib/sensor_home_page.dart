@@ -89,7 +89,7 @@ class _SensorHomePageState extends State<SensorHomePage> {
 
   void _checkAlert() {
     // Threshold for high movement, adjust as needed
-    double threshold = 1.5;
+    double threshold = 6;
 
     bool highAccel = _accelerometerValues.any((v) => v.abs() > threshold);
     bool highGyro = _gyroscopeValues.any((v) => v.abs() > threshold);
