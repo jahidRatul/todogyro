@@ -17,19 +17,14 @@ class _SensorHomePageState extends State<SensorHomePage> {
   StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
 
-  final int _maxDataPoints = 100; // Number of data points to show
+  final int _maxDataPoints = 100;
   bool _alertTriggered = false;
-
 
   List<_SensorData> walkingGyroData = [];
   List<_SensorData> meetingGyroData = [];
-// Number of data points to show
+
   GyroscopeEvent? lastGyroEvent;
 
-
-
-// Start listening to the gyroscope sensor data stream
-  // Start listening to the gyroscope sensor data stream
   void _startGyroscopeStream() {
     gyroscopeEvents.listen((GyroscopeEvent event) {
       if (mounted){setState(() {
@@ -51,7 +46,6 @@ class _SensorHomePageState extends State<SensorHomePage> {
           meetingGyroData.removeAt(0); // Remove the oldest data point
         }
       });}
-
     });
   }
   void _addGyroDataToChart(GyroscopeEvent event, List<_SensorData> dataList) {
@@ -88,7 +82,6 @@ class _SensorHomePageState extends State<SensorHomePage> {
   }
 
   void _checkAlert() {
-    // Threshold for high movement, adjust as needed
     double threshold = 6;
 
     bool highAccel = _accelerometerValues.any((v) => v.abs() > threshold);
@@ -144,8 +137,6 @@ class _SensorHomePageState extends State<SensorHomePage> {
             children: [
               Column(
                 children: [
-      
-                  // Meeting Gyro Data Chart
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -191,8 +182,6 @@ class _SensorHomePageState extends State<SensorHomePage> {
                       ],
                     ),
                   ),
-      
-                  // Walking Gyro Data Chart
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -241,8 +230,6 @@ class _SensorHomePageState extends State<SensorHomePage> {
       
                 ],
               ),
-      
-              // Accelerometer Data Chart
               Column(
                 children: [
                   Text(
