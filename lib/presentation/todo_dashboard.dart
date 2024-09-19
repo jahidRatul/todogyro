@@ -25,8 +25,10 @@ class _TodoDashboardState extends State<TodoDashboard> {
   List <TaskListData> allTaskList=[];
   List<ItemData> itemDataList = [];
   List<int> counterArray = [];
+
   int totalComplete=0;
   int totalIncomplete=0;
+  DateTime today = DateTime.now();
 
   Future<void> _saveTaskLists() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -38,6 +40,9 @@ class _TodoDashboardState extends State<TodoDashboard> {
     totalComplete=0;
     totalIncomplete=0;
      counterArray = [];
+
+
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? jsonData = prefs.getStringList('taskLists');
     if (jsonData != null) {
@@ -52,6 +57,8 @@ class _TodoDashboardState extends State<TodoDashboard> {
         print("Task List: ${taskList.name}}");
       });
     }
+
+
   }
   Future<void> _loadTaskData(String? name) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -64,11 +71,16 @@ class _TodoDashboardState extends State<TodoDashboard> {
           itemDataList.forEach((item){
             countItemLoop=countItemLoop+1;
             print("item List: ${item.title}, Items: ${item.time}");
+
             if(item.checked==true){
               totalComplete=totalComplete+1;
             }
             if(item.checked==null){
               totalIncomplete=totalIncomplete+1;
+            }
+            if(item.time!=null && _isSameDate(item.time, today)){
+
+              _showDueDateAlert(item.title??"");
             }
           });
           counterArray.add(countItemLoop);
@@ -78,6 +90,32 @@ class _TodoDashboardState extends State<TodoDashboard> {
     else{
       counterArray.add(0);
     }
+  }
+
+  bool _isSameDate(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  void _showDueDateAlert(String taskName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Task Due Today"),
+          content: Text("The task \"$taskName\" is due today."),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
