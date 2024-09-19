@@ -75,7 +75,7 @@ class _TodoDashboardState extends State<TodoDashboard> {
             if(item.checked==true){
               totalComplete=totalComplete+1;
             }
-            if(item.checked==null){
+            if(item.checked==null||item.checked==false){
               totalIncomplete=totalIncomplete+1;
             }
             if(item.time!=null && _isSameDate(item.time, today)){
