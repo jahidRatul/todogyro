@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:link3app/core/constants/app_sizes.dart';
-import 'package:link3app/sensor_home_page.dart';
-import 'package:link3app/splash_to_do_screen.dart';
-import 'package:link3app/todo_dashboard.dart';
+import 'package:link3app/presentation/splash_to_do_screen.dart';
+import 'sensor_home_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

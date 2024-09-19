@@ -15,7 +15,6 @@ class ItemData{
     };
   }
 
-  // Convert JSON to ItemData object
   factory ItemData.fromJson(Map<String, dynamic> json) {
     return ItemData(
       title: json['title'],

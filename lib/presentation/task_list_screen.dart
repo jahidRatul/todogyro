@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:link3app/core/constants/app_colors.dart';
 import 'package:link3app/core/constants/app_sizes.dart';
 import 'package:link3app/data_model/item_data.dart';
-import 'task_details_screen.dart';
-import 'data_model/task_list_data.dart';
+
+import '../data_model/task_list_data.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../widgets/snack_bar_widget.dart';
+import 'task_details_screen.dart';
 
 class TaskListScreen extends StatefulWidget {
   TaskListScreen({required this.taskListData, super.key});
@@ -33,7 +36,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-
             colorScheme: ColorScheme.light(primary: AppColors.primaryBlue),
               datePickerTheme: DatePickerThemeData(
             weekdayStyle: TextStyle(
@@ -45,8 +47,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
               foregroundColor:WidgetStatePropertyAll(AppColors.baseWhite),padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: AppSizes.padDefaultMin))
             ),
                 cancelButtonStyle: ButtonStyle(
-                    foregroundColor:WidgetStatePropertyAll(AppColors.baseDark),padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: AppSizes.padDefaultMin))
-
+                    foregroundColor:WidgetStatePropertyAll(AppColors.baseDark),
+                    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: AppSizes.padDefaultMin))
                 )
           )
           ),
@@ -68,22 +70,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   Future<void> _saveTaskData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Convert the list of tasks to a JSON string
     List<String> jsonData = itemDataList.map((task) => json.encode(task.toJson())).toList();
-
-    // Save the JSON string in SharedPreferences
     prefs.setStringList("${widget.taskListData?.name}", jsonData);
   }
 
   Future<void> _loadTaskData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Retrieve the saved JSON data from SharedPreferences
     List<String>? jsonData = prefs.getStringList("${widget.taskListData?.name}");
-
     if (jsonData != null) {
-      // Convert the JSON data back to ItemData objects
       setState(() {
         itemDataList = jsonData.map((task) => ItemData.fromJson(json.decode(task))).toList();
       });
@@ -108,7 +102,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
         floatingActionButton: SizedBox(
           width: AppSizes.scrX*.9,
           child: ElevatedButton(
-
             child: Row(
               children: [
                 Container(
@@ -124,7 +117,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
               ],
             ),
             onPressed: () {
-
               showModalBottomSheet<void>(
                 isScrollControlled: true,
                 context: context,
@@ -176,7 +168,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                           setModalState(() {});
                                           selectedDate=null;
                                           _ctrlTaskName.clear();
-
                                         }
                                       },
                                       icon: Icon(
@@ -201,7 +192,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                       Icons.sticky_note_2_rounded,
                                       color: AppColors.iconColors,
                                     ),
-
                                     IconButton(
                                       onPressed: () {
                                         _selectDate(context).then((_) {
@@ -320,8 +310,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   );
               },
               ),
-
-
             ],
           ),
         ),
@@ -332,6 +320,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
     setState(() {
       itemDataList.removeAt(index);
     });
-    _saveTaskData();  // Update the saved data
+    _saveTaskData();
   }
 }

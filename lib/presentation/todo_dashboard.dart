@@ -1,5 +1,8 @@
 
 import 'dart:convert';
+import 'package:link3app/data_model/item_data.dart';
+import 'package:link3app/presentation/task_list_screen.dart';
+import 'package:link3app/widgets/snack_bar_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -7,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:link3app/core/constants/app_colors.dart';
 import 'package:link3app/core/constants/app_sizes.dart';
 import 'package:link3app/data_model/task_list_data.dart';
-import 'package:link3app/task_list_screen.dart';
+
 
 
 
@@ -20,36 +23,60 @@ class _TodoDashboardState extends State<TodoDashboard> {
 
   final _ctrlTaskListName = TextEditingController();
   List <TaskListData> allTaskList=[];
+  List<ItemData> itemDataList = [];
+  List<int> counterArray = [];
+  int totalComplete=0;
+  int totalIncomplete=0;
 
   Future<void> _saveTaskLists() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Convert the list of TaskListData to JSON string
     List<String> jsonData =
     allTaskList.map((taskList) => json.encode(taskList.toJson())).toList();
-
-    // Save JSON string in SharedPreferences
     prefs.setStringList('taskLists', jsonData);
   }
   Future<void> _loadTaskLists() async {
+    totalComplete=0;
+    totalIncomplete=0;
+     counterArray = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Retrieve the JSON string from SharedPreferences
-
     List<String>? jsonData = prefs.getStringList('taskLists');
-
     if (jsonData != null) {
       setState(() {
-        // Convert JSON string back to TaskListData objects
-
         allTaskList = jsonData
             .map((taskList) => TaskListData.fromJson(json.decode(taskList)))
             .toList();
       });
+      allTaskList.forEach((taskList) {
+        _loadTaskData(taskList.name);
+
+        print("Task List: ${taskList.name}}");
+      });
     }
-    for(final items in allTaskList){
-
-
+  }
+  Future<void> _loadTaskData(String? name) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? jsonData = prefs.getStringList(name??'');
+    if (jsonData != null) {
+      setState(() {
+        itemDataList = jsonData.map((task) => ItemData.fromJson(json.decode(task))).toList();
+        int countItemLoop =0;
+        if(itemDataList.isNotEmpty){
+          itemDataList.forEach((item){
+            countItemLoop=countItemLoop+1;
+            print("item List: ${item.title}, Items: ${item.time}");
+            if(item.checked==true){
+              totalComplete=totalComplete+1;
+            }
+            if(item.checked==null){
+              totalIncomplete=totalIncomplete+1;
+            }
+          });
+          counterArray.add(countItemLoop);
+        }
+      });
+    }
+    else{
+      counterArray.add(0);
     }
   }
 
@@ -79,7 +106,6 @@ class _TodoDashboardState extends State<TodoDashboard> {
                     content: TextField(
                       controller: _ctrlTaskListName,
                       textCapitalization: TextCapitalization.sentences,
-
                     ),
                     actions: [
                       ElevatedButton(
@@ -101,12 +127,19 @@ class _TodoDashboardState extends State<TodoDashboard> {
                               backgroundColor: AppColors.primaryBlue
                           ),
                           onPressed: (){
-                            allTaskList.add(TaskListData(name: _ctrlTaskListName.text,)); // Add new empty task list
-                            _saveTaskLists();
-                            setState(() {
-                            });
-                            _ctrlTaskListName.clear();
-                            Navigator.pop(context);
+                            if(_ctrlTaskListName.text.trim().isNotEmpty){
+                              allTaskList.add(TaskListData(name: _ctrlTaskListName.text,));
+                              _saveTaskLists();
+                              _loadTaskLists();
+                              setState(() {
+                              });
+                              _ctrlTaskListName.clear();
+                              Navigator.pop(context);
+                            }
+                            else{
+                              getSnackBar(context: context,text: "Input Task List");
+
+                            }
                           },
                           child: Text("Submit",
                             style: TextStyle(
@@ -114,7 +147,6 @@ class _TodoDashboardState extends State<TodoDashboard> {
                             ),
                           )
                       ),
-
                     ],
                   )
               );
@@ -135,7 +167,7 @@ class _TodoDashboardState extends State<TodoDashboard> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                subtitle: Text("5 Completed, 5 Uncompleted",
+                subtitle: Text("$totalIncomplete Incomplete, $totalComplete completed",
                   style: TextStyle(
                     fontSize: AppSizes.szFontNormalText,
                     color: AppColors.subTextColor
@@ -144,40 +176,41 @@ class _TodoDashboardState extends State<TodoDashboard> {
                 trailing: Icon(
                   Icons.search,
                   size: AppSizes.padDefault*.8,
-
+        
                 ),
               ),
             ),
             Divider(),
-            ListView.separated(
-                separatorBuilder: (BuildContext context, int index) {
-                  return SizedBox(height: AppSizes.padDefaultMicro);
-                },
-              shrinkWrap: true,
-              padding: EdgeInsets.all(AppSizes.padDefaultMicro),
-              itemCount:allTaskList?.length??0,
-                itemBuilder: (BuildContext context, index){
-                  return ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSizes.padDefaultMicro),
-                    ),
-                    leading: Icon(
-                      Icons.list,color: AppColors.primaryBlue,size: AppSizes.padDefault,
-                    ),
-                    tileColor: AppColors.baseWhite,
-                    title: Text(allTaskList[index].name??""),
-                    textColor: AppColors.subTextColor,
-                    titleTextStyle:TextStyle(fontSize: AppSizes.szFontLabel) ,
-                    // trailing: Text(
-                    //   '${allTaskList[index].name ?? 0}',  // Show the number of tasks
-                    //   style: TextStyle(color: AppColors.primaryBlue, fontSize: AppSizes.szFontLabel),
-                    // ),
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>TaskListScreen(taskListData: allTaskList[index],)));
-                    },
+            Expanded(
+              child: ListView.separated(
+                  separatorBuilder: (BuildContext context, int index) {
+                    return SizedBox(height: AppSizes.padDefaultMicro);
+                  },
+                shrinkWrap: true,
+                padding: EdgeInsets.all(AppSizes.padDefaultMicro),
+                itemCount:allTaskList?.length??0,
+                  itemBuilder: (BuildContext context, index){
+                    return ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppSizes.padDefaultMicro),
+                      ),
+                      leading: Icon(
+                        Icons.list,color: AppColors.primaryBlue,size: AppSizes.padDefault,
+                      ),
+                      trailing: Text("(${counterArray[index]})"),
+                      tileColor: AppColors.baseWhite,
+                      title: Text(allTaskList[index].name??""),
+                      textColor: AppColors.subTextColor,
+                      titleTextStyle:TextStyle(fontSize: AppSizes.szFontLabel) ,
 
-                  );
-                }
+                      onTap: ()async{
+                       await Navigator.push(context, MaterialPageRoute(builder: (context)=>TaskListScreen(taskListData: allTaskList[index],))).then((val){
+                         _loadTaskLists();
+                       });
+                      },
+                    );
+                  }
+              ),
             )
           ],
         ),

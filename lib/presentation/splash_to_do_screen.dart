@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:link3app/core/constants/app_colors.dart';
-import 'package:link3app/todo_dashboard.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'todo_dashboard.dart';
 
 class SplashToDoScreen extends StatefulWidget {
   const SplashToDoScreen({super.key});
@@ -47,7 +47,6 @@ class _SplashToDoScreenState extends State<SplashToDoScreen> {
                     fontSize: 21
                 )
             ),
-
           ],
         ),
       ),

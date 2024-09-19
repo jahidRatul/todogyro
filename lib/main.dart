@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:link3app/homepage.dart';
+import 'package:link3app/presentation/homepage.dart';
  // For charts
 
 void main() => runApp(SensorTrackingApp());
