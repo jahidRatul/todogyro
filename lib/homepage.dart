@@ -37,8 +37,10 @@ class HomePage extends StatelessWidget {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xff36E0E0),
-                            padding: EdgeInsets.all(20)
-      
+                            padding: EdgeInsets.all(20),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(AppSizes.padDefaultMicro)
+                            )
                         ),
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) =>  SplashToDoScreen()));
@@ -61,14 +63,17 @@ class HomePage extends StatelessWidget {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xff3F69FF),
-                            padding: EdgeInsets.all(20)
+                            padding: EdgeInsets.all(20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppSizes.padDefaultMicro)
+                            )
       
                         ),
                         onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) =>  SensorHomePage()),
                           );
                         },
-                        child: Text("Sencor Tracking",
+                        child: Text("Sensor Tracking",
                             style: TextStyle(
                                 color: Colors.white,
                               fontSize: 21

@@ -11,6 +11,8 @@ class AppColors {
   static Color addTaskTxtInputColor = const Color(0xffB8B8B8);
   static Color disableColor = const Color(0xffCFCFCF);
   static Color iconColors = const Color(0xffA7A7A7);
+  static Color redColor = const Color(0xffFF0000);
+  static Color deleteTxtColor = const Color(0xffADADAD);
 
 
 }
